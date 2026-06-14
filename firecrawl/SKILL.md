@@ -10,6 +10,9 @@ Turn websites into LLM-ready data using the [Firecrawl](https://firecrawl.dev) A
 ## Setup
 
 Requires the `FIRECRAWL_API_KEY` environment variable to be set (get a key at https://firecrawl.dev).
+A key can be stored in `firecrawl/.env` (gitignored) as `FIRECRAWL_API_KEY=...` and loaded with
+`export $(cat firecrawl/.env | xargs)` before running the scripts below.
+
 Install the Python SDK if not already available:
 
 ```bash
