@@ -114,6 +114,7 @@ Skills are not MCP servers and not tools. MCP defines how an agent connects to e
 
 ### Development & Code Tools
 
+- [9Router](https://github.com/decolua/9router) - Local proxy that connects Claude Code and other coding tools to 40+ LLM providers with automatic subscription/cheap/free fallback, tool-output token compression, multi-account load balancing, and quota tracking. Not a SKILL.md-based skill but a standalone routing server — review its handling of API keys/credentials before use. *By [@decolua](https://github.com/decolua)*
 - [artifacts-builder](https://github.com/anthropics/skills/tree/main/skills/web-artifacts-builder) - Suite of tools for creating elaborate, multi-component claude.ai HTML artifacts using modern frontend web technologies (React, Tailwind CSS, shadcn/ui).
 - [aws-skills](https://github.com/zxkane/aws-skills) - AWS development with CDK best practices, cost optimization MCP servers, and serverless/event-driven architecture patterns.
 - [Changelog Generator](./changelog-generator/) - Automatically creates user-facing changelogs from git commits by analyzing history and transforming technical commits into customer-friendly release notes.
