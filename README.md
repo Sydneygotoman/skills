@@ -162,6 +162,7 @@ Skills are not MCP servers and not tools. MCP defines how an agent connects to e
 - [Competitive Ads Extractor](./competitive-ads-extractor/) - Extracts and analyzes competitors' ads from ad libraries to understand messaging and creative approaches that resonate.
 - [Domain Name Brainstormer](./domain-name-brainstormer/) - Generates creative domain name ideas and checks availability across multiple TLDs including .com, .io, .dev, and .ai extensions.
 - [Internal Comms](./internal-comms/) - Helps write internal communications including 3P updates, company newsletters, FAQs, status reports, and project updates using company-specific formats.
+- [Knowledge Work Plugins](https://github.com/anthropics/knowledge-work-plugins) - Open-source collection of 11 role-specific plugins (sales, marketing, finance, legal, product, customer support, data, enterprise search, bio research, and more), each bundling domain skills, slash commands, and MCP integrations for Claude Cowork and Claude Code.
 - [Lead Research Assistant](./lead-research-assistant/) - Identifies and qualifies high-quality leads by analyzing your product, searching for target companies, and providing actionable outreach strategies.
 
 ### Communication & Writing
