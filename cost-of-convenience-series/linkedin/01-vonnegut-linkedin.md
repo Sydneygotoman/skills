@@ -29,6 +29,8 @@ The absence reads just as well without a machine to explain it.
 
 ## LinkedIn post copy
 
+**Selected: Version B**, below.
+
 **Version A — story-first hook:**
 
 > Kurt Vonnegut once walked to a newsstand to buy a single envelope.
