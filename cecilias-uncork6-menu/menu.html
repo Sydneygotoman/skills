@@ -371,7 +371,7 @@
     margin-top:0.5mm;
     white-space:nowrap;
   }
-  .tag.sparkling, .tag.rose, .tag.red, .tag.white{ color:var(--peach-text); }
+  .col .tag{ color:var(--peach-text); }
   .col.right .tag{ color:var(--blue-text); }
 
   /* ---------- How it works ---------- */
@@ -385,11 +385,11 @@
   .steps{
     display:flex;
     justify-content:center;
-    gap:14mm;
+    gap:6mm;
     margin-top:1.8mm;
     text-align:center;
   }
-  .step{ width:42mm; }
+  .step{ width:37mm; }
   .step-num{
     font-family:'Playfair Display',serif;
     font-weight:700;
@@ -490,69 +490,69 @@
   .addr .dot{ color:var(--gold-soft); margin:0 7px; }
 
   /* ---------- Street food page ---------- */
-  .dishes{ margin-top:3.5mm; }
+  .dishes{ margin-top:2.4mm; }
   .dish-row{
     display:flex;
     align-items:flex-start;
     gap:5mm;
-    padding:3.4mm 0;
+    padding:2.3mm 0;
     border-bottom:0.5pt solid var(--hairline);
   }
   .dish-row:first-child{ padding-top:0; }
   .dish-num{
-    width:6mm; height:6mm;
+    width:5.6mm; height:5.6mm;
     border-radius:50%;
     background:var(--green);
     color:#fff;
     display:flex; align-items:center; justify-content:center;
     font-family:'Playfair Display',serif;
     font-weight:700;
-    font-size:8.8pt;
+    font-size:8.2pt;
     flex:none;
-    margin-top:0.4mm;
+    margin-top:0.3mm;
   }
   .dish-text{ flex:1; min-width:0; }
   .dish-eyebrow{
-    font-size:7.8pt;
+    font-size:7.4pt;
     font-weight:700;
-    letter-spacing:1.8px;
+    letter-spacing:1.6px;
     text-transform:uppercase;
     color:var(--gold);
   }
   .dish-name{
     font-family:'Playfair Display',serif;
     font-weight:700;
-    font-size:12.5pt;
+    font-size:11.5pt;
     color:var(--ink);
-    margin-top:0.7mm;
+    margin-top:0.5mm;
   }
   .dish-desc{
-    font-size:8.6pt;
+    font-size:8.2pt;
     color:var(--grey);
-    margin-top:1mm;
-    line-height:1.3;
+    margin-top:0.8mm;
+    line-height:1.25;
   }
   .dish-price{
     font-family:'Playfair Display',serif;
     font-weight:700;
-    font-size:12.5pt;
+    font-size:11.5pt;
     letter-spacing:0.4px;
     color:var(--green-deep);
     flex:none;
-    margin-top:0.9mm;
+    margin-top:0.6mm;
     white-space:nowrap;
   }
 
   .know-list{
     list-style:none;
     max-width:150mm;
-    margin:3mm auto 0;
+    margin:2mm auto 0;
     text-align:center;
   }
   .know-list li{
-    font-size:8.2pt;
+    font-size:8pt;
     color:var(--grey);
-    line-height:1.6;
+    line-height:1.4;
   }
   .know-list li::before{
     content:"—";
@@ -650,22 +650,22 @@
         </div>
         <div class="wine-row">
           <div class="num">4</div>
-          <div class="wine-text"><div class="wine-name">Silverstream</div><div class="wine-var">Blanc de Blanc Sparkling</div></div>
-          <div class="tag">Sparkling</div>
+          <div class="wine-text"><div class="wine-name">3 Drops</div><div class="wine-var">Ros&eacute;</div></div>
+          <div class="tag">Ros&eacute;</div>
         </div>
         <div class="wine-row">
           <div class="num">5</div>
-          <div class="wine-text"><div class="wine-name">Blanc de Noir</div><div class="wine-var">Sparkling Pinot Noir</div></div>
-          <div class="tag">Sparkling</div>
-        </div>
-        <div class="wine-row">
-          <div class="num">6</div>
           <div class="wine-text"><div class="wine-name">3 Drops</div><div class="wine-var">Pinot Noir</div></div>
           <div class="tag">Red</div>
         </div>
         <div class="wine-row">
+          <div class="num">6</div>
+          <div class="wine-text"><div class="wine-name">3 Drops</div><div class="wine-var">Merlot</div></div>
+          <div class="tag">Red</div>
+        </div>
+        <div class="wine-row">
           <div class="num">7</div>
-          <div class="wine-text"><div class="wine-name">3 Drops</div><div class="wine-var">Cabernets</div></div>
+          <div class="wine-text"><div class="wine-name">3 Drops</div><div class="wine-var">Nebbiolo</div></div>
           <div class="tag">Red</div>
         </div>
         <div class="wine-row">
@@ -682,16 +682,21 @@
     <div class="steps">
       <div class="step">
         <div class="step-num">01</div>
-        <div class="step-title">Arrive &amp; collect</div>
-        <div class="step-desc">Grab your 6 tokens at the door with entry</div>
+        <div class="step-title">Arrive</div>
+        <div class="step-desc">Grab your 6 tasting tokens at the door with entry</div>
       </div>
       <div class="step">
         <div class="step-num">02</div>
+        <div class="step-title">Scan to join</div>
+        <div class="step-desc">Scan the QR code to join Cecilia's Wine Club</div>
+      </div>
+      <div class="step">
+        <div class="step-num">03</div>
         <div class="step-title">Pick a side</div>
         <div class="step-desc">Warm Barossa boldness or cool Great Southern precision — or both</div>
       </div>
       <div class="step">
-        <div class="step-num">03</div>
+        <div class="step-num">04</div>
         <div class="step-title">Taste &amp; vote</div>
         <div class="step-desc">One token per pour — cast your vote for best dressed sommelier</div>
       </div>
@@ -704,7 +709,7 @@
       <div>
         <div class="qr-eyebrow">Scan to Join</div>
         <div class="qr-title">Cecilia's Wine Club</div>
-        <div class="qr-copy">Rate today's pours, leave a review, and see what everyone else thought of First Drop vs 3 Drops.<br><b>Download the app to complete your Wine Profile — the more you taste, the better we get at picking wines for you.</b></div>
+        <div class="qr-copy">Cecilia's Wine Club is our web platform — build your Wine Profile and rate the wines you drink at Cecilia's.<br><b>Join the Uncork Passport to keep reviewing wines at Cecilia's events — no app to download.</b></div>
         <div class="qr-url">wineclub.cecilias.com.au</div>
       </div>
     </div>
@@ -748,6 +753,15 @@
       <div class="dish-row">
         <div class="dish-num">2</div>
         <div class="dish-text">
+          <div class="dish-eyebrow">SA-Inspired</div>
+          <div class="dish-name">Droewors</div>
+          <div class="dish-desc">South African dried sausage, 300g</div>
+        </div>
+        <div class="dish-price">$20</div>
+      </div>
+      <div class="dish-row">
+        <div class="dish-num">3</div>
+        <div class="dish-text">
           <div class="dish-eyebrow">Pasta</div>
           <div class="dish-name">Lamb Puttanesca</div>
           <div class="dish-desc">Penne, olives, capers &amp; tomato, finished with shaved parmesan</div>
@@ -755,25 +769,25 @@
         <div class="dish-price">$20</div>
       </div>
       <div class="dish-row">
-        <div class="dish-num">3</div>
+        <div class="dish-num">4</div>
         <div class="dish-text">
           <div class="dish-eyebrow">Share Plate</div>
           <div class="dish-name">Loaded Fries</div>
-          <div class="dish-desc">Crispy fries, bacon, melted cheese, spicy garlic mayo, scallions</div>
-        </div>
-        <div class="dish-price">$20</div>
-      </div>
-      <div class="dish-row">
-        <div class="dish-num">4</div>
-        <div class="dish-text">
-          <div class="dish-eyebrow">From the Shell</div>
-          <div class="dish-name">Garlic Roasted Oysters</div>
-          <div class="dish-desc">Six oysters roasted with garlic butter, lemon herb aioli</div>
+          <div class="dish-desc">Crispy fries, bacon, cheese, spicy garlic mayo, scallions</div>
         </div>
         <div class="dish-price">$20</div>
       </div>
       <div class="dish-row">
         <div class="dish-num">5</div>
+        <div class="dish-text">
+          <div class="dish-eyebrow">From the Shell</div>
+          <div class="dish-name">Garlic Roasted Oysters</div>
+          <div class="dish-desc">6 oysters roasted with garlic butter, lemon herb aioli</div>
+        </div>
+        <div class="dish-price">$20</div>
+      </div>
+      <div class="dish-row">
+        <div class="dish-num">6</div>
         <div class="dish-text">
           <div class="dish-eyebrow">Vegetarian</div>
           <div class="dish-name">Fried Loaded Veg</div>
@@ -782,17 +796,26 @@
         <div class="dish-price">$20</div>
       </div>
       <div class="dish-row">
-        <div class="dish-num">6</div>
+        <div class="dish-num">7</div>
         <div class="dish-text">
           <div class="dish-eyebrow">Off the Grill</div>
           <div class="dish-name">Cheese Bacon Burger</div>
-          <div class="dish-desc">Smashed beef patty, bacon, cheese, pickles, served with chips</div>
+          <div class="dish-desc">Beef patty, bacon, cheese, pickles, served with chips</div>
+        </div>
+        <div class="dish-price">$20</div>
+      </div>
+      <div class="dish-row">
+        <div class="dish-num">8</div>
+        <div class="dish-text">
+          <div class="dish-eyebrow">Dessert</div>
+          <div class="dish-name">Brie Dumpling</div>
+          <div class="dish-desc">With honey and strawberries</div>
         </div>
         <div class="dish-price">$20</div>
       </div>
     </div>
 
-    <div class="divider" style="margin-top:8mm;"><div class="rule"></div><div class="diamond"></div><div class="rule"></div></div>
+    <div class="divider" style="margin-top:3mm;"><div class="rule"></div><div class="diamond"></div><div class="rule"></div></div>
 
     <div class="section-title">Good to Know</div>
     <ul class="know-list">
