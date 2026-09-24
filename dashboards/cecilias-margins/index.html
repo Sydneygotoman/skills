@@ -913,7 +913,7 @@ let MENU_ITEMS=[
 {name:"Chef's Cheesecake",menu:"Dinner",sellPrice:22,foodCost:3.5,packaging:0,labour:2.0,notes:""},
 {name:"Affogato",menu:"Dinner",sellPrice:22,foodCost:2.5,packaging:0,labour:1.0,notes:""},
 // FRIDAY
-{name:"Pacific Oysters",menu:"Friday",sellPrice:22,foodCost:3.5,packaging:0,labour:1.5,notes:"Sea — Summer 2027",newItem:true},
+{name:"Pacific Oysters",menu:"Friday",sellPrice:22,foodCost:7.9,packaging:0,labour:1.5,notes:"Sea — Summer 2027 · 4 oysters per serve",newItem:true},
 {name:"Tuna Crudo",menu:"Friday",sellPrice:22,foodCost:3.5,packaging:0,labour:1.0,notes:"Sea — Summer 2027",newItem:true},
 {name:"Anchovy Toast",menu:"Friday",sellPrice:22,foodCost:2.0,packaging:0,labour:1.0,notes:"Sea — Summer 2027",newItem:true},
 {name:"Crab Potato Pancake",menu:"Friday",sellPrice:22,foodCost:4.5,packaging:0,labour:2.0,notes:"Sea — Summer 2027",newItem:true},
@@ -1024,7 +1024,7 @@ const SPECS={
   "Pork Belly":[["Pork belly (banh mi)",0.3,"kg",18.5],["Yakiniku glaze (made)",0.04,"L",10],["Cabbage green",0.1,"kg",4],["Mixed pickles (house or sourced)",0.04,"kg",10],["Red wine jus (made)",0.04,"L",18]],
   "C.F.D. Cecilia's Fried Duck":[["Duck breast",0.3,"kg",28.5],["Rice flour (est.)",0.05,"kg",4],["Frying oil (est.)",0.1,"L",3],["Gochujang sauce",0.04,"L",12],["Mixed pickles (house or sourced)",0.04,"kg",10],["Fresh herbs mix (coriander/mint/basil)",0.01,"kg",30]],
   "Lobster Bouillabaisse":[["Whole lobster WA cooked",0.5,"each",27.5],["Prawn cutlet raw 16/20 frozen",0.06,"kg",22.71],["Fish stock (est.)",0.3,"L",8],["Tomato (roasting)",0.1,"kg",5],["Fennel (est.)",0.1,"kg",5],["Aioli / rouille (made)",0.03,"L",10],["Saffron (est.)",0.0002,"kg",3000],["Sourdough loaf (~800g)",0.1,"loaf",6]],
-  "Pacific Oysters":[["Coffin Bay / Pacific oysters (shucked)",3,"each",1.9],["Mignonette (made)",0.02,"L",5],["Lemon",0.25,"each",0.8]],
+  "Pacific Oysters":[["Coffin Bay / Pacific oysters (shucked)",4,"each",1.9,1],["Mignonette (made)",0.02,"L",5],["Lemon",0.25,"each",0.8]],
   "Anchovy Toast":[["White anchovies (est.)",0.03,"kg",55],["Sourdough loaf (~800g)",0.08,"loaf",6],["Butter unsalted (Anchor 5kg)",0.015,"kg",18.75],["Tomato (roasting)",0.03,"kg",5]],
   "Crab Potato Pancake":[["Crab meat (est.)",0.03,"kg",60],["Potato (est.)",0.1,"kg",2.5],["Eggs (Fruit Spot 700g cage 15dz)",0.5,"each",0.29],["Thickened cream (Yarde Farm 3L)",0.02,"L",9.22],["Fresh herbs mix (coriander/mint/basil)",0.005,"kg",30]],
   "Prawns & Rouille":[["Prawn cutlet raw 16/20 frozen",0.08,"kg",22.71],["Aioli / rouille (made)",0.03,"L",10],["Lemon",0.25,"each",0.8],["Sourdough loaf (~800g)",0.05,"loaf",6]],
@@ -2387,7 +2387,15 @@ function loadFromStorage(){
     const m=localStorage.getItem('cecilias_menu');
     const b=localStorage.getItem('cecilias_bar');
     const ing=localStorage.getItem('cecilias_ing');
-    if(m)MENU_ITEMS=JSON.parse(m).filter(i=>i.menu!=='Catering').map(recalcItem);
+    if(m){
+      MENU_ITEMS=JSON.parse(m).filter(i=>i.menu!=='Catering').map(i=>{
+        // Owner-confirmed data corrections that saved sessions predate
+        if(i.menu==='Friday'&&i.name==='Pacific Oysters'&&i.foodCost===3.5){i.foodCost=7.9;i.notes='Sea — Summer 2027 · 4 oysters per serve';}
+        // Cards you haven't edited are rebuilt so they pick up recipe fixes
+        if(i.recipe&&i.recipe.src!=='edited')delete i.recipe;
+        return recalcItem(i);
+      });
+    }
     if(b)BAR_ITEMS=JSON.parse(b);
     if(ing)INGREDIENTS=JSON.parse(ing);
     const ts=localStorage.getItem('cecilias_ts');
