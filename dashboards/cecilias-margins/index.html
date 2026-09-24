@@ -264,7 +264,7 @@ tr.subgroup-header td{background:#15102a;color:#8080b0;font-size:12px;padding:6p
 <!-- ACTIONS TAB -->
 <div id="tab-actions" class="tab-content">
   <div class="demo-note" style="background:#15102a;border-color:#6c3483;color:#c9b8d4;">
-    <strong>How to read this:</strong> P1 = below the 60% target at its true cost. P2 = within 2 points of target, or a food cost that doesn't match its recipe. P3 = revenue ideas. "Current margin" matches the menu tables; "Vs target" uses the recipe cost when the two disagree. A dish sold on several menus at the same price appears once.
+    <strong>How to read this:</strong> P1 = below the 60% target at its true cost. P2 = within 2 points of target, or a food cost too low to cover a count stated in the dish (6 oysters, 5 plates). Smaller portions are treated as intended. P3 = revenue ideas. "Current margin" matches the menu tables; "Vs target" uses the recipe cost when the two disagree. A dish sold on several menus at the same price appears once.
   </div>
   <div class="section">
     <div class="section-header">🎯 Priority Actions — <span id="actions-count">0</span> dishes need attention · calculated live from the menu tables</div>
@@ -339,7 +339,7 @@ tr.subgroup-header td{background:#15102a;color:#8080b0;font-size:12px;padding:6p
   <div class="section">
     <div class="section-header">🏮 Friday Supper Club Items</div>
     <div style="margin:12px;padding:10px 14px;background:#1a0f2e;border:1px solid #6c3483;border-radius:8px;font-size:12px;color:#c39bd3;">
-      ⚠️ <strong>Half portions:</strong> All $22 small plates use half the ingredient quantities of the equivalent dinner dish. Food costs and margins reflect half-portion sizing.
+      ⚠️ <strong>Small plates from mains:</strong> Friday plates are the Lunch/Dinner dish at a smaller portion. Each plate's 📋 Recipe card shows the main's ingredients scaled to the plate, and the portion as a % of the main. <span id="friday-portion-range"></span>
     </div>
     <div style="overflow-x:auto;">
       <table><thead><tr><th>Item</th><th>Sell $</th><th>Food Cost</th><th>Labour</th><th>Total Cost</th><th>GP $</th><th>Margin %</th><th>Status</th><th>Notes</th><th>Recipe</th></tr></thead>
@@ -1042,6 +1042,34 @@ const SPECS={
   "Summer Squash Crudo":[["Summer squash (est.)",0.12,"kg",6],["Olive oil EV (Buona Cucina 4L)",0.02,"L",14.99],["Lemon",0.25,"each",0.8],["Pistachio (shelled, raw)",0.005,"kg",45],["Fresh herbs mix (coriander/mint/basil)",0.005,"kg",30]],
   "Corn & Tofu Toast":[["Corn cob (est.)",1,"each",1.2],["Silken tofu (est.)",0.05,"kg",8],["Sourdough loaf (~800g)",0.08,"loaf",6],["Chilli oil",0.005,"L",12]]
 };
+// Friday Supper Club plates are the Lunch/Dinner dish at a smaller portion: same ingredients, scaled to the
+// plate's food cost. Plates not listed here (Pacific Oysters, Kataifi Prawns, etc.) are Friday-only.
+// Change a mapping here if a plate is built from a different dish.
+const FRIDAY_SOURCE={
+  "Tuna Crudo":["Dinner","Tuna Crudo"],
+  "Anchovy Toast":["Dinner","White Anchovies"],
+  "Barramundi Bites":["Dinner","Roast Barramundi"],
+  "Bouillabaisse Cup":["Dinner","Lobster Bouillabaisse"],
+  "Glazed Pork Belly":["Dinner","Glazed Pork Belly"],
+  "Koji Pork Belly":["Dinner","Pork Belly"],
+  "Pork Belly Skewers":["Dinner","Pork Belly"],
+  "Wagyu Skewers":["Dinner","Seared Wagyu Skewers"],
+  "Steak & Rösti":["Dinner","Scotch Fillet"],
+  "BBQ Lamb on Bread":["Dinner","BBQ Lamb Shoulder"],
+  "C.F.D. Bites":["Dinner","C.F.D. Cecilia's Fried Duck"],
+  "Katsu Duck Sando":["Lunch","C.F.D. Katsu Sando"],
+  "Duck Fat Corn":["Lunch","Duck Fat Corn"],
+  "Kataifi Haloumi":["Dinner","Kataifi-Wrapped Haloumi"],
+  "Whipped Sesame Tofu":["Dinner","Whipped Sesame Tofu"],
+  "Charred Butternut":["Lunch","Charred Butternut"],
+  "Confit Squash":["Dinner","Confit Summer Squash"],
+  "Potato Rösti":["Lunch","Potato Rösti"],
+  "Dessert Plate":["Dinner","Chef's Cheesecake"]
+};
+function fridaySource(item){
+  const src=item.menu==='Friday'&&FRIDAY_SOURCE[item.name];
+  return src?MENU_ITEMS.find(x=>x.menu===src[0]&&x.name===src[1]):null;
+}
 function avgFood(pred){const a=MENU_ITEMS.filter(pred);return a.length?a.reduce((s,i)=>s+i.foodCost,0)/a.length:0;}
 // Food cost per canapé piece and per share platter, from the costing model (catering itself is no longer on the menu)
 const CANAPE_REF={
@@ -1057,8 +1085,8 @@ const canapes=(list,each)=>list.map(n=>({n:n.replace(' (20)','')+' — 1 canapé
 const share=(n,q,label)=>({n:label,q,u:'platter',c:CANAPE_REF[n]||0,fix:false});
 const COMPOSITES={
   "5 Plates for $110 Deal":()=>{const n=MENU_ITEMS.filter(i=>i.menu==='Friday'&&!/deal/i.test(i.name)).length;return[{n:'Friday plate — average food cost of the '+n+' plates',q:5,u:'plate',c:avgFood(i=>i.menu==='Friday'&&!/deal/i.test(i.name)),fix:true}];},
-  "Two Course Set Menu":()=>[{n:'Entrée — average of the $24 dinner plates',q:1,u:'serve',c:avgFood(i=>i.menu==='Dinner'&&i.sellPrice===24),fix:true},{n:'Main — average of the $42–$56 dinner mains',q:1,u:'serve',c:avgFood(i=>i.menu==='Dinner'&&i.sellPrice>=42&&i.sellPrice<=56),fix:true}],
-  "Three Course Set Menu":()=>COMPOSITES["Two Course Set Menu"]().concat([{n:'Dessert — average of the $22 dinner desserts',q:1,u:'serve',c:avgFood(i=>i.menu==='Dinner'&&i.sellPrice===22),fix:true}]),
+  "Two Course Set Menu":()=>[{n:'Entrée — average $24 dinner plate (portion as served)',q:1,u:'serve',c:avgFood(i=>i.menu==='Dinner'&&i.sellPrice===24),fix:false},{n:'Main — average $42–$56 dinner main (portion as served)',q:1,u:'serve',c:avgFood(i=>i.menu==='Dinner'&&i.sellPrice>=42&&i.sellPrice<=56),fix:false}],
+  "Three Course Set Menu":()=>COMPOSITES["Two Course Set Menu"]().concat([{n:'Dessert — average $22 dinner dessert (portion as served)',q:1,u:'serve',c:avgFood(i=>i.menu==='Dinner'&&i.sellPrice===22),fix:false}]),
   "Standard Package (per person)":()=>canapes(CANAPE_STD,8/CANAPE_STD.length),
   "Premium Package (per person)":()=>canapes(CANAPE_PREM,1),
   "The Coast (per person)":()=>canapes(CANAPE_PREM,1).concat([share("Cecilia's Grazing Board",0.1,"Grazing board, 1/10 share (assumed — confirm what The Coast includes)")]),
@@ -1067,9 +1095,17 @@ const COMPOSITES={
 };
 function recipeSource(item){
   if(COMPOSITES[item.name])return{src:'built',lines:COMPOSITES[item.name]()};
+  const main=fridaySource(item);
+  if(main){
+    if(!main.recipe)attachRecipe(main);
+    return{src:'smallplate',from:main.menu+': '+main.name,mainFood:main.foodCost,
+      lines:main.recipe.lines.filter(l=>!l.pack).map(l=>({n:l.n,q:l.q,u:l.u,c:l.c,fix:false}))};
+  }
   const modelName=MODEL_ALIAS[item.menu+'|'+item.name]||MODEL_ALIAS[item.name]||item.name;
   const m=RECIPES.find(r=>r.name===modelName)||RECIPES.find(r=>r.name.replace(/"/g,'')===item.name);
-  if(m)return{src:'model',from:m.name,lines:m.ings.filter(g=>g.n!=='Packaging subtotal').map(g=>{const pack=PACK_RE.test(g.n);return{n:g.n,q:g.q,u:g.u,c:g.c,pack,fix:!pack&&/^(each|slice|unit)$/i.test(g.u)};})};
+  // A line is a fixed count only when the dish name states it, e.g. "Oysters Natural (6)" -> the 6 oysters
+  const named=+((item.name.match(/\((\d+)\)/)||[])[1]||0);
+  if(m)return{src:'model',from:m.name,lines:m.ings.filter(g=>g.n!=='Packaging subtotal').map(g=>{const pack=PACK_RE.test(g.n);return{n:g.n,q:g.q,u:g.u,c:g.c,pack,fix:!pack&&named>0&&g.q===named};})};
   const spec=SPECS[SPEC_ALIAS[item.name]||item.name];
   if(spec)return{src:'draft',lines:spec.map(s=>({n:s[0],q:s[1],u:s[2],c:s[3],fix:!!s[4]}))};
   return{src:'none',lines:[{n:'Food cost (no breakdown yet)',q:1,u:'serve',c:item.foodCost,fix:false}]};
@@ -1097,21 +1133,25 @@ function attachRecipe(item){
     note=b.fixedScaled<1
       ?'At the counts listed, these ingredients cost '+cur(b.raw)+', but the menu row allows '+cur(fc)+'. The quantities below are shrunk to fit, so the row is probably understating food cost.'
       :'At the counts listed, these ingredients cost '+cur(b.raw)+', less than the '+cur(fc)+' on the menu row. The quantities below are scaled up to fit.';
+  } else if(s.src==='smallplate'){
+    note='Small-plate version of '+s.from+': same ingredients at '+Math.round(fc/s.mainFood*100)+'% of the main\'s portion ('+cur(fc)+' food vs '+cur(s.mainFood)+').';
   } else if(s.src==='model'&&b.raw>0&&Math.abs(fc-b.raw)/b.raw>0.1){
-    note='The costing model had this dish at '+cur(b.raw)+' food; the menu row uses '+cur(fc)+', so quantities are scaled to match.';
+    note=(fc<b.raw?'Smaller portion':'Larger portion')+' than the costing model: quantities are '+Math.round(fc/b.raw*100)+'% of the model recipe ('+cur(fc)+' food vs '+cur(b.raw)+').';
   }
-  // Only flag real evidence: a stated count that doesn't fit, or your own costing model disagreeing with the row.
-  // Draft specs are guesses, so a draft costing more than the row is not flagged.
-  const under=b.raw-fc>0.5&&(b.fixedScaled<0.95||(s.src!=='draft'&&fc<b.raw*0.9));
+  // Smaller portions are deliberate, so only a stated count (6 oysters, 5 plates) that the food cost can't cover is flagged.
+  const under=b.raw-fc>0.5&&b.fixedScaled<0.95;
   item.recipe={src:s.src,from:s.from||'',lines,raw:b.raw,note,under};
 }
 function attachAllRecipes(force){
   // Plain dishes first, then set menus/packages that average other dishes' costs
-  const order=[...MENU_ITEMS.filter(i=>!COMPOSITES[i.name]),...MENU_ITEMS.filter(i=>COMPOSITES[i.name])];
+  const order=[...MENU_ITEMS.filter(i=>!COMPOSITES[i.name]&&!fridaySource(i)),...MENU_ITEMS.filter(i=>fridaySource(i)),...MENU_ITEMS.filter(i=>COMPOSITES[i.name])];
   order.forEach(i=>{if(force||!i.recipe||!i.recipe.lines)attachRecipe(i);});
 }
+// Re-build cards that depend on other dishes (Friday small plates, set menus) after an edit
 function refreshComposites(){
-  MENU_ITEMS.filter(x=>COMPOSITES[x.name]&&(!x.recipe||x.recipe.src!=='edited')).forEach(attachRecipe);
+  const fresh=x=>!x.recipe||x.recipe.src!=='edited';
+  MENU_ITEMS.filter(x=>fridaySource(x)&&fresh(x)).forEach(attachRecipe);
+  MENU_ITEMS.filter(x=>COMPOSITES[x.name]&&fresh(x)).forEach(attachRecipe);
 }
 function rescaleRecipe(item){
   if(!item.recipe||item.recipe.src!=='edited'){attachRecipe(item);return;}
@@ -1398,6 +1438,9 @@ function renderFridayTab(){
   const deal=all.find(i=>/deal/i.test(i.name));
   const plates=all.filter(i=>i!==deal);
   const avg=plates.reduce((a,b)=>a+b.marginPct,0)/plates.length;
+  const ratios=plates.map(p=>{const m=fridaySource(p);return m?{p,r:p.foodCost/m.foodCost,m}:null;}).filter(Boolean).sort((a,b)=>a.r-b.r);
+  if(ratios.length){const lo=ratios[0],hi=ratios[ratios.length-1];
+    document.getElementById('friday-portion-range').textContent='Food cost ranges from '+Math.round(lo.r*100)+'% of the main ('+lo.p.name+' from '+lo.m.name+') to '+Math.round(hi.r*100)+'% ('+hi.p.name+' from '+hi.m.name+').';}
   const avgEl=document.getElementById('friday-avg-margin');
   avgEl.textContent=pct(avg);avgEl.className=valClass(marginClass(avg,'Friday'));
   const check=document.getElementById('friday-deal-check');
@@ -1484,8 +1527,7 @@ function renderActions(){
     const parts=[];
     parts.push(cur(i.foodCost)+' food + '+cur(i.labour)+' labour on '+cur(s)+' = '+pct(m)+' margin.');
     if(costing){
-      const why=r.src==='model'?'your costing model has this at':'at the counts listed, the recipe card comes to';
-      parts.push('Costing check: '+why+' '+cur(r.raw)+' food, not '+cur(i.foodCost)+'. At that cost it makes '+pct(realM)+'. Confirm which food cost is right.');
+      parts.push('Costing check: the counts in this dish ('+r.lines.filter(l=>l.fix).map(l=>fmtQty(l.q/(i.foodCost/r.raw))+' × '+l.n).join(', ')+') cost '+cur(r.raw)+' in food at current unit costs, but the row allows '+cur(i.foodCost)+'. At that cost it makes '+pct(realM)+'. Either the row or a unit cost is wrong.');
     }
     if(vs<0){
       const cost=(costing?r.raw:i.foodCost)+i.labour+pk;
@@ -1514,7 +1556,7 @@ function renderActions(){
   if(houseWine.length)rev('Wine','House wine carafe',houseWine,a=>'House wines run at '+pct(a)+'. A 250ml carafe between the '+cur(houseWine[0].glassPrice)+' glass and the '+cur(houseWine[0].bottlePrice)+' bottle gives couples a middle option.');
   if(coffee.length)rev('Bar','Breakfast + coffee bundle',coffee,a=>'Coffee averages '+pct(a)+' margin. A breakfast + coffee bundle adds high-margin volume.');
   acts.push({p:3,menu:'All',item:'Monthly price review',margin:0,vs:null,vsLabel:'—',impact:'Process',
-    action:nBelow+' dishes are below target and '+nCosting+' have a food cost that doesn\'t match their recipe (listed above). Settle the costing checks first, then review supplier prices monthly.'});
+    action:nBelow+' dishes are below target and '+nCosting+' have a food cost too low for the counts in the dish (listed above). Settle the costing checks first, then review supplier prices monthly.'});
 
   document.getElementById('actions-count').textContent=flagged;
   const mCls=(v,menu)=>v<ASSUMPTIONS.minMargin?'val-red':v<targetFor(menu)?'val-amber':'val-green';
@@ -1941,6 +1983,7 @@ function buildRecipeIngRows(item){
 function recipeSourceText(item){
   const r=item.recipe;
   if(r.src==='model')return'From your costing model'+(r.from&&r.from!==item.name?' ('+r.from+')':'')+'.';
+  if(r.src==='smallplate')return'Friday small plate: the same recipe as the main, scaled to this plate\'s food cost. Edit the main\'s card to change the ingredients; edit this card only if the small plate differs.';
   if(r.src==='built')return'Built from your other menu costs. Lines marked "assumed" are guesses; replace them with what the package really includes.';
   if(r.src==='draft')return'Draft spec: no costed recipe existed for this dish, so the ingredient list is estimated from the dish name, priced from your price book ((est.) = not in the price book yet), and the quantities are back-solved to the menu row\'s food cost. Replace them with your real portions.';
   if(r.src==='edited')return'Edited by you. The menu row\'s food cost now comes from this card.';
@@ -1957,7 +2000,7 @@ function updateRecipeIng(ii,field,val){
   if(item.recipe.lines.some(x=>x.pack))item.packaging=round2(lineSum(item.recipe.lines,true));
   item.recipe.raw=item.foodCost;
   recalcItem(item);
-  if(!COMPOSITES[item.name])refreshComposites();
+  refreshComposites();
   saveToStorage();renderKPIs();
   document.getElementById('recipe-line-'+ii).textContent='$'+l.l.toFixed(2);
   const ft=document.getElementById('recipe-food-total');if(ft)ft.textContent=cur(item.foodCost);
