@@ -140,7 +140,6 @@ tr.subgroup-header td{background:#15102a;color:#8080b0;font-size:12px;padding:6p
   <div class="nav-tab" tabindex="0" data-tab="friday" onclick="showTab('friday')">🏮 Friday Supper Club</div>
   <div class="nav-tab" tabindex="0" data-tab="locals" onclick="showTab('locals')">🌿 Locals Midweek</div>
   <div class="nav-tab" tabindex="0" data-tab="canapes" onclick="showTab('canapes')">🥂 Canapés & Functions</div>
-  <div class="nav-tab" tabindex="0" data-tab="catering" onclick="showTab('catering')">📦 Catering</div>
   <div class="nav-tab" tabindex="0" data-tab="bar" onclick="showTab('bar')">🍷 Bar & Drinks</div>
   <div class="nav-tab" tabindex="0" data-tab="wine" onclick="showTab('wine')">🍾 Wine List</div>
   <div class="nav-tab" tabindex="0" data-tab="ingredients" onclick="showTab('ingredients')">🧂 Ingredients</div>
@@ -264,11 +263,14 @@ tr.subgroup-header td{background:#15102a;color:#8080b0;font-size:12px;padding:6p
 
 <!-- ACTIONS TAB -->
 <div id="tab-actions" class="tab-content">
+  <div class="demo-note" style="background:#15102a;border-color:#6c3483;color:#c9b8d4;">
+    <strong>How to read this:</strong> P1 = below the 60% target at its true cost. P2 = within 2 points of target, or a food cost that doesn't match its recipe. P3 = revenue ideas. "Current margin" matches the menu tables; "Vs target" uses the recipe cost when the two disagree. A dish sold on several menus at the same price appears once.
+  </div>
   <div class="section">
-    <div class="section-header">🎯 Priority Actions — <span id="actions-count">0</span> menu rows need attention · calculated live from the menu tables</div>
+    <div class="section-header">🎯 Priority Actions — <span id="actions-count">0</span> dishes need attention · calculated live from the menu tables</div>
     <div class="section-body" style="padding:0;overflow-x:auto;">
       <table>
-        <thead><tr><th>#</th><th>Priority</th><th>Menu</th><th>Item</th><th>Current Margin</th><th>Vs Target</th><th>Action Required</th><th>Impact</th></tr></thead>
+        <thead><tr><th>#</th><th>Priority</th><th>Menu</th><th>Item</th><th>Current Margin</th><th>Vs Target <span style="text-transform:none;font-weight:400;">(at true cost)</span></th><th>Action Required</th><th>Impact</th></tr></thead>
         <tbody id="tbody-actions"></tbody>
       </table>
     </div>
@@ -379,23 +381,6 @@ tr.subgroup-header td{background:#15102a;color:#8080b0;font-size:12px;padding:6p
     <div style="overflow-x:auto;">
       <table><thead><tr><th>Item</th><th>Sell $</th><th>Food Cost</th><th>Labour</th><th>Total Cost</th><th>GP $</th><th>Margin %</th><th>Status</th><th>Notes</th><th>Recipe</th></tr></thead>
       <tbody id="tbody-canapes"></tbody></table>
-    </div>
-  </div>
-</div>
-
-<!-- CATERING TAB -->
-<div id="tab-catering" class="tab-content">
-  <div class="section">
-    <div class="section-header">📦 Catering — Target: 65% (includes packaging)</div>
-    <div class="toolbar">
-      <input class="search-box" id="search-catering" placeholder="🔍 Search..." oninput="filterTbody('tbody-catering',this.value)">
-      <select class="filter-select" id="filter-catering" onchange="filterMarginTbody('tbody-catering',this.value)">
-        <option value="">All margins</option><option value="50">Critical only</option><option value="65">Below catering target (65%)</option>
-      </select>
-    </div>
-    <div style="overflow-x:auto;">
-      <table><thead><tr><th>Item</th><th>Sell $</th><th>Food Cost</th><th>Packaging</th><th>Labour</th><th>Total Cost</th><th>GP $</th><th>Margin %</th><th>Status</th><th>Notes</th><th>Recipe</th></tr></thead>
-      <tbody id="tbody-catering"></tbody></table>
     </div>
   </div>
 </div>
@@ -857,7 +842,7 @@ POS_DATA.forEach(d=>{
   d.lost_gp = d.quad==='plow' ? Math.round(d.rev_q2*(TARGET_MARGIN - d.margin)) : 0;
 });
 
-const ASSUMPTIONS={labourRate:35,cateringTarget:0.65,dineInTarget:0.60,barTarget:0.70,minMargin:0.50};
+const ASSUMPTIONS={labourRate:35,dineInTarget:0.60,barTarget:0.70,minMargin:0.50};
 
 let MENU_ITEMS=[
 // BREAKFAST
@@ -966,33 +951,6 @@ let MENU_ITEMS=[
 {name:"The Coast (per person)",menu:"Canapes",sellPrice:80,foodCost:22.0,packaging:0,labour:5.0,notes:"Functions package",newItem:true},
 {name:"The House (per person)",menu:"Canapes",sellPrice:100,foodCost:28.0,packaging:0,labour:5.0,notes:"Functions package",newItem:true},
 {name:"The Signature (per person)",menu:"Canapes",sellPrice:130,foodCost:38.0,packaging:0,labour:5.0,notes:"Functions — premium",newItem:true},
-// CATERING
-{name:"Charred Lamb Ribs (1kg)",menu:"Catering",sellPrice:75.0,foodCost:20.46,packaging:4.2,labour:5.0,notes:""},
-{name:"Cecilia's Burger Box (15)",menu:"Catering",sellPrice:180.0,foodCost:59.49,packaging:5.0,labour:5.0,notes:""},
-{name:"Yellowfin Tuna Spoons (20)",menu:"Catering",sellPrice:140.0,foodCost:18.7,packaging:5.5,labour:5.0,notes:""},
-{name:"Smoked Salmon Bites (20)",menu:"Catering",sellPrice:130.0,foodCost:29.23,packaging:3.5,labour:5.0,notes:""},
-{name:"Stracciatella Jars (20)",menu:"Catering",sellPrice:130.0,foodCost:34.39,packaging:13.5,labour:5.0,notes:""},
-{name:"Seven-Spiced Octopus Skewers (20)",menu:"Catering",sellPrice:120.0,foodCost:20.46,packaging:4.8,labour:5.0,notes:""},
-{name:"Stracciatella Crostini (20)",menu:"Catering",sellPrice:100.0,foodCost:30.3,packaging:3.5,labour:5.0,notes:""},
-{name:"Sweet Potato Fondant Box (20)",menu:"Catering",sellPrice:90.0,foodCost:13.76,packaging:3.5,labour:5.0,notes:""},
-{name:"Cured Cucumber Spoons (20)",menu:"Catering",sellPrice:75.0,foodCost:3.86,packaging:5.5,labour:5.0,notes:""},
-{name:"House Bread Onion Gruyere (20)",menu:"Catering",sellPrice:75.0,foodCost:13.74,packaging:3.5,labour:5.0,notes:""},
-{name:"Yakiniku Duck Salad",menu:"Catering",sellPrice:90.0,foodCost:48.05,packaging:3.8,labour:5.0,notes:""},
-{name:"Koji Chicken Salad",menu:"Catering",sellPrice:80.0,foodCost:23.5,packaging:3.8,labour:5.0,notes:""},
-{name:"Gochujang Chickpea Salad",menu:"Catering",sellPrice:70.0,foodCost:10.59,packaging:3.8,labour:5.0,notes:""},
-{name:"Seafood Selection Platter",menu:"Catering",sellPrice:180.0,foodCost:39.37,packaging:9.1,labour:5.0,notes:""},
-{name:"Ocean Platter (whole lobster)",menu:"Catering",sellPrice:380.0,foodCost:84.26,packaging:9.1,labour:5.0,notes:""},
-{name:"Cecilia's Grazing Board",menu:"Catering",sellPrice:220.0,foodCost:48.0,packaging:8.5,labour:5.0,notes:""},
-{name:"Meat & Cheese Board",menu:"Catering",sellPrice:150.0,foodCost:27.31,packaging:8.5,labour:5.0,notes:""},
-{name:"Vietnamese Share Platter",menu:"Catering",sellPrice:180.0,foodCost:26.15,packaging:9.1,labour:5.0,notes:""},
-{name:"Garden Platter",menu:"Catering",sellPrice:150.0,foodCost:35.3,packaging:8.5,labour:5.0,notes:""},
-{name:"Deconstructed Cheesecake Jars (12)",menu:"Catering",sellPrice:90.0,foodCost:16.89,packaging:8.5,labour:5.0,notes:""},
-{name:"Dark Chocolate Ganache Pots (12)",menu:"Catering",sellPrice:90.0,foodCost:11.09,packaging:7.3,labour:5.0,notes:""},
-{name:"Seasonal Fruit Yoghurt Cups (12)",menu:"Catering",sellPrice:75.0,foodCost:9.1,packaging:7.3,labour:5.0,notes:""},
-{name:"Dessert Platter (20 pcs)",menu:"Catering",sellPrice:120.0,foodCost:14.79,packaging:8.5,labour:5.0,notes:""},
-{name:"Iced Matcha 1L",menu:"Catering",sellPrice:36.0,foodCost:4.14,packaging:1.7,labour:2.92,notes:""},
-{name:"Strawberry Matcha 1L",menu:"Catering",sellPrice:36.0,foodCost:6.88,packaging:1.7,labour:2.92,notes:""},
-{name:"Vietnamese Coffee Carafe (8 serves)",menu:"Catering",sellPrice:48.0,foodCost:2.64,packaging:0.8,labour:2.92,notes:""},
 ];
 
 function recalcItem(i){
@@ -1085,12 +1043,18 @@ const SPECS={
   "Corn & Tofu Toast":[["Corn cob (est.)",1,"each",1.2],["Silken tofu (est.)",0.05,"kg",8],["Sourdough loaf (~800g)",0.08,"loaf",6],["Chilli oil",0.005,"L",12]]
 };
 function avgFood(pred){const a=MENU_ITEMS.filter(pred);return a.length?a.reduce((s,i)=>s+i.foodCost,0)/a.length:0;}
-function cateringItem(n){return MENU_ITEMS.find(x=>x.menu==='Catering'&&x.name===n);}
-function perPiece(n){const i=cateringItem(n);return i?i.foodCost/20:0;}
+// Food cost per canapé piece and per share platter, from the costing model (catering itself is no longer on the menu)
+const CANAPE_REF={
+  'Yellowfin Tuna Spoons (20)':18.7,'Cured Cucumber Spoons (20)':3.86,'Seven-Spiced Octopus Skewers (20)':20.46,
+  'Sweet Potato Fondant Box (20)':13.7625,'House Bread Onion Gruyere (20)':13.7375,'Smoked Salmon Bites (20)':29.225,
+  'Stracciatella Crostini (20)':30.3025,'Stracciatella Jars (20)':34.39,
+  "Cecilia's Grazing Board":48.001,'Vietnamese Share Platter':26.15,'Ocean Platter (whole lobster)':84.26,'Dessert Platter (20 pcs)':14.785
+};
+function perPiece(n){return(CANAPE_REF[n]||0)/20;}
 const CANAPE_STD=['Yellowfin Tuna Spoons (20)','Cured Cucumber Spoons (20)','Seven-Spiced Octopus Skewers (20)','Sweet Potato Fondant Box (20)','House Bread Onion Gruyere (20)'];
 const CANAPE_PREM=CANAPE_STD.concat(['Smoked Salmon Bites (20)','Stracciatella Crostini (20)','Stracciatella Jars (20)']);
 const canapes=(list,each)=>list.map(n=>({n:n.replace(' (20)','')+' — 1 canapé',q:each,u:'piece',c:perPiece(n),fix:true}));
-const share=(n,q,label)=>{const i=cateringItem(n);return{n:label,q,u:'platter',c:i?i.foodCost:0,fix:false};};
+const share=(n,q,label)=>({n:label,q,u:'platter',c:CANAPE_REF[n]||0,fix:false});
 const COMPOSITES={
   "5 Plates for $110 Deal":()=>{const n=MENU_ITEMS.filter(i=>i.menu==='Friday'&&!/deal/i.test(i.name)).length;return[{n:'Friday plate — average food cost of the '+n+' plates',q:5,u:'plate',c:avgFood(i=>i.menu==='Friday'&&!/deal/i.test(i.name)),fix:true}];},
   "Two Course Set Menu":()=>[{n:'Entrée — average of the $24 dinner plates',q:1,u:'serve',c:avgFood(i=>i.menu==='Dinner'&&i.sellPrice===24),fix:true},{n:'Main — average of the $42–$56 dinner mains',q:1,u:'serve',c:avgFood(i=>i.menu==='Dinner'&&i.sellPrice>=42&&i.sellPrice<=56),fix:true}],
@@ -1322,7 +1286,7 @@ let INGREDIENTS=[
 function pct(v){return(v*100).toFixed(1)+'%';}
 function cur(v){return'$'+parseFloat(v).toFixed(2);}
 function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
-function targetFor(menu){return menu==='Catering'?ASSUMPTIONS.cateringTarget:(menu==='Bar'||menu==='Wine')?ASSUMPTIONS.barTarget:ASSUMPTIONS.dineInTarget;}
+function targetFor(menu){return (menu==='Bar'||menu==='Wine')?ASSUMPTIONS.barTarget:ASSUMPTIONS.dineInTarget;}
 function marginClass(m,menu){
   const t=targetFor(menu);
   if(m<ASSUMPTIONS.minMargin)return'critical';
@@ -1357,7 +1321,6 @@ function showTab(id){
   else if(id==='friday')renderFridayTab();
   else if(id==='locals')renderMenuTable('tbody-locals','Locals');
   else if(id==='canapes')renderMenuTable('tbody-canapes','Canapes');
-  else if(id==='catering')renderCateringTable();
   else if(id==='bar')renderBarTable();
   else if(id==='wine')renderWineTable();
   else if(id==='ingredients')renderIngredients();
@@ -1371,7 +1334,7 @@ function rerenderActiveTab(){
 
 // ===== KPIs =====
 function renderKPIs(){
-  const dine=MENU_ITEMS.filter(i=>i.menu!=='Catering'&&i.menu!=='Friday');
+  const dine=MENU_ITEMS.filter(i=>i.menu!=='Friday');
   const avgM=dine.reduce((a,b)=>a+b.marginPct,0)/dine.length;
   const critical=dine.filter(i=>i.marginPct<ASSUMPTIONS.minMargin).length;
   const atRisk=dine.filter(i=>i.marginPct>=ASSUMPTIONS.minMargin&&i.marginPct<ASSUMPTIONS.dineInTarget).length;
@@ -1392,7 +1355,7 @@ function renderKPIs(){
 }
 
 // ===== OVERVIEW =====
-const OVERVIEW_MENUS=[['Breakfast','breakfast'],['Lunch','lunch'],['Dinner','dinner'],['Friday','friday'],['Locals','locals'],['Canapes','canapes'],['Catering','catering']];
+const OVERVIEW_MENUS=[['Breakfast','breakfast'],['Lunch','lunch'],['Dinner','dinner'],['Friday','friday'],['Locals','locals'],['Canapes','canapes']];
 function renderOverview(){
   setTimeout(renderPrimeCost, 50);
   let rows='';
@@ -1428,11 +1391,6 @@ function renderMenuTable(tbodyId,menuName){
   const items=MENU_ITEMS.filter(i=>i.menu===menuName);
   document.getElementById(tbodyId).innerHTML=items.map(i=>menuRow(i,menuName,false)).join('');
 }
-function renderCateringTable(){
-  const items=MENU_ITEMS.filter(i=>i.menu==='Catering');
-  document.getElementById('tbody-catering').innerHTML=items.map(i=>menuRow(i,'Catering',true)).join('');
-}
-
 // ===== FRIDAY =====
 function renderFridayTab(){
   renderMenuTable('tbody-friday','Friday');
@@ -1506,52 +1464,70 @@ function renderIngredients(){
 
 // ===== ACTIONS =====
 function renderActions(){
-  const acts=[];
+  const pts=v=>(v>=0?'+':'−')+Math.abs(v*100).toFixed(1)+' pts';
+  // One line per dish: the same dish at the same price and cost on several menus is merged
+  const groups=new Map();
   MENU_ITEMS.forEach(i=>{
-    const t=targetFor(i.menu), m=i.marginPct, pk=i.packaging||0, s=i.sellPrice;
-    const costs=cur(i.foodCost)+' food + '+cur(i.labour)+' labour'+(pk?' + '+cur(pk)+' packaging':'')+' on '+cur(s)+' = '+cur(i.totalCost)+' cost, '+pct(m)+' margin.';
-    if(i.recipe&&i.recipe.under){
-      const realM=(s-(i.recipe.raw+i.labour+pk))/s;
-      acts.push({p:realM<t?1:2,menu:i.menu,item:i.name,margin:m,gap:Math.max(0,m-realM),gapLabel:'−'+((m-realM)*100).toFixed(1)+' pts',
-        action:'Costing check: the recipe card comes to '+cur(i.recipe.raw)+' food at the counts listed, but the row uses '+cur(i.foodCost)+'. At the recipe cost this dish makes '+pct(realM)+', not '+pct(m)+'. Confirm which figure is right.',impact:'Costing'});
-    }
-    if(m<t){
-      const gap=t-m;
-      const need=Math.ceil(i.totalCost/(1-t)*2)/2;
-      const maxFood=s*(1-t)-i.labour-pk;
-      acts.push({p:1,menu:i.menu,item:i.name,margin:m,gap,gapLabel:pct(gap),
-        action:costs+' Raise to '+cur(need)+(maxFood>0?' or bring food cost down to '+cur(maxFood):'')+' to reach '+Math.round(t*100)+'%.',
-        impact:(m<ASSUMPTIONS.minMargin||gap>0.02)?'High':'Medium'});
-    } else if(m-t<0.02){
-      const m10=(s-(i.foodCost*1.1+i.labour+pk))/s;
-      acts.push({p:2,menu:i.menu,item:i.name,margin:m,gap:-(m-t),gapLabel:'+'+((m-t)*100).toFixed(1)+' pts',
-        action:costs+' Only '+((m-t)*100).toFixed(1)+' pts above the '+Math.round(t*100)+'% target. A 10% rise in food cost would take it to '+pct(m10)+'.',impact:'Watch'});
-    }
+    const key=[i.name,i.sellPrice,i.foodCost,i.labour,i.packaging||0].join('|');
+    if(!groups.has(key))groups.set(key,{i,menus:[]});
+    groups.get(key).menus.push(i.menu);
   });
-  acts.sort((a,b)=>a.p-b.p||b.gap-a.gap);
+  const acts=[];
+  groups.forEach(({i,menus})=>{
+    const t=targetFor(i.menu), m=i.marginPct, s=i.sellPrice, pk=i.packaging||0;
+    const r=i.recipe;
+    const costing=!!(r&&r.under);
+    const realM=costing?(s-(r.raw+i.labour+pk))/s:m;
+    const eff=Math.min(m,realM);          // the margin to act on
+    const vs=eff-t;
+    if(!costing&&vs>=0.02)return;        // healthy and correctly costed
+    const parts=[];
+    parts.push(cur(i.foodCost)+' food + '+cur(i.labour)+' labour on '+cur(s)+' = '+pct(m)+' margin.');
+    if(costing){
+      const why=r.src==='model'?'your costing model has this at':'at the counts listed, the recipe card comes to';
+      parts.push('Costing check: '+why+' '+cur(r.raw)+' food, not '+cur(i.foodCost)+'. At that cost it makes '+pct(realM)+'. Confirm which food cost is right.');
+    }
+    if(vs<0){
+      const cost=(costing?r.raw:i.foodCost)+i.labour+pk;
+      const need=Math.ceil(cost/(1-t));
+      const maxFood=s*(1-t)-i.labour-pk;
+      parts.push('To reach '+Math.round(t*100)+'%: raise to '+cur(need)+(maxFood>0?' or bring food cost to '+cur(maxFood)+' or less':'')+'.');
+    } else if(!costing){
+      const m10=(s-(i.foodCost*1.1+i.labour+pk))/s;
+      parts.push((vs<0.0005?'Sits exactly on':'Only '+(vs*100).toFixed(1)+' pts above')+' the '+Math.round(t*100)+'% target. A 10% rise in food cost would take it to '+pct(m10)+'.');
+    }
+    const p=vs<0?1:2;
+    const impact=costing?'Costing':vs<0?((eff<ASSUMPTIONS.minMargin||vs<-0.02)?'High':'Medium'):'Watch';
+    acts.push({p,menu:menus.join(' + '),item:i.name,margin:m,vs,vsLabel:pts(vs),action:parts.join(' '),impact});
+  });
+  acts.sort((a,b)=>a.p-b.p||a.vs-b.vs);
+  const flagged=acts.length;
+  const nCosting=acts.filter(a=>a.impact==='Costing').length;
+  const nBelow=acts.filter(a=>a.p===1).length;
 
   const avgOf=list=>list.reduce((a,b)=>a+b.marginPct,0)/list.length;
   const cocktails=BAR_ITEMS.filter(b=>b.category==='Cocktail');
   const houseWine=WINE_LIST.filter(w=>w.subcategory==='House');
   const coffee=BAR_ITEMS.filter(b=>['Coffee','Hot Asian','Pour on Ice'].includes(b.category));
-  const flagged=acts.length;
-  if(cocktails.length)acts.push({p:3,menu:'Bar',item:'Cocktail upsell',margin:avgOf(cocktails),gapLabel:'✓',action:'Cocktails average '+pct(avgOf(cocktails))+' margin at '+cur(cocktails[0].sellPrice)+'. Train floor staff to suggest one with every starter round.',impact:'Revenue'});
-  if(houseWine.length)acts.push({p:3,menu:'Wine',item:'House wine carafe',margin:avgOf(houseWine),gapLabel:'✓',action:'House wines run at '+pct(avgOf(houseWine))+'. A 250ml carafe between the '+cur(houseWine[0].glassPrice)+' glass and '+cur(houseWine[0].bottlePrice)+' bottle gives couples a middle option.',impact:'Revenue'});
-  if(coffee.length)acts.push({p:3,menu:'Bar',item:'Breakfast + coffee bundle',margin:avgOf(coffee),gapLabel:'✓',action:'Coffee averages '+pct(avgOf(coffee))+' margin. A breakfast + coffee bundle adds high-margin volume.',impact:'Revenue'});
-  acts.push({p:3,menu:'All',item:'Monthly price review',margin:0,gapLabel:'—',action:flagged+' menu rows are below target, within 2 points of it, or failing a costing check (listed above). Review supplier prices monthly; most of these are protein-driven.',impact:'Process'});
+  const rev=(menu,item,list,text)=>{const a=avgOf(list);acts.push({p:3,menu,item,margin:a,vs:a-ASSUMPTIONS.barTarget,vsLabel:pts(a-ASSUMPTIONS.barTarget),action:text(a),impact:'Revenue'});};
+  if(cocktails.length)rev('Bar','Cocktail upsell',cocktails,a=>'Cocktails average '+pct(a)+' margin at '+cur(cocktails[0].sellPrice)+'. Train floor staff to suggest one with every starter round.');
+  if(houseWine.length)rev('Wine','House wine carafe',houseWine,a=>'House wines run at '+pct(a)+'. A 250ml carafe between the '+cur(houseWine[0].glassPrice)+' glass and the '+cur(houseWine[0].bottlePrice)+' bottle gives couples a middle option.');
+  if(coffee.length)rev('Bar','Breakfast + coffee bundle',coffee,a=>'Coffee averages '+pct(a)+' margin. A breakfast + coffee bundle adds high-margin volume.');
+  acts.push({p:3,menu:'All',item:'Monthly price review',margin:0,vs:null,vsLabel:'—',impact:'Process',
+    action:nBelow+' dishes are below target and '+nCosting+' have a food cost that doesn\'t match their recipe (listed above). Settle the costing checks first, then review supplier prices monthly.'});
 
   document.getElementById('actions-count').textContent=flagged;
-  const cls=v=>v<ASSUMPTIONS.minMargin?'val-red':v<ASSUMPTIONS.dineInTarget?'val-amber':'val-green';
-  document.getElementById('tbody-actions').innerHTML=acts.map((a,i)=>{
+  const mCls=(v,menu)=>v<ASSUMPTIONS.minMargin?'val-red':v<targetFor(menu)?'val-amber':'val-green';
+  document.getElementById('tbody-actions').innerHTML=acts.map((a,n)=>{
     const pClass=a.p===1?'priority-p1':a.p===2?'priority-p2':'priority-p3';
-    const gapCls=a.gapLabel.startsWith('+')||a.gapLabel==='✓'?'val-green':a.gapLabel==='—'?'':'val-red';
+    const vsCls=a.vs==null?'':a.vs<0?'val-red':a.vs<0.02?'val-amber':'val-green';
     const impCls={High:'critical',Medium:'at-risk',Costing:'critical',Watch:'warning',Revenue:'on-target'}[a.impact]||'info';
-    return '<tr class="'+pClass+'"><td style="font-size:16px;font-weight:700;padding-left:16px;">#'+(i+1)+'</td>'
+    return '<tr class="'+pClass+'"><td style="font-size:16px;font-weight:700;padding-left:16px;">#'+(n+1)+'</td>'
       +'<td><span class="badge '+(a.p===1?'critical':a.p===2?'at-risk':'warning')+'">P'+a.p+'</span></td>'
       +'<td>'+a.menu+'</td><td style="font-weight:600;">'+esc(a.item)+'</td>'
-      +'<td class="'+(a.margin>0?cls(a.margin):'')+'">'+(a.margin>0?pct(a.margin):'&mdash;')+'</td>'
-      +'<td class="'+gapCls+'">'+a.gapLabel+'</td>'
-      +'<td style="font-size:12px;max-width:420px;min-width:240px;">'+a.action+'</td>'
+      +'<td class="'+(a.margin>0?mCls(a.margin,a.menu==='Bar'||a.menu==='Wine'?a.menu:'Dinner'):'')+'">'+(a.margin>0?pct(a.margin):'&mdash;')+'</td>'
+      +'<td class="'+vsCls+'" style="white-space:nowrap;">'+a.vsLabel+'</td>'
+      +'<td style="font-size:12px;max-width:440px;min-width:240px;">'+a.action+'</td>'
       +'<td><span class="badge '+impCls+'">'+a.impact+'</span></td></tr>';
   }).join('');
 }
@@ -2236,10 +2212,10 @@ function clearUploadResults(){
 }
 
 
-// ===== LABOUR CAP — Owner directive: max $5.00 labour per dish on dine-in & catering =====
+// ===== LABOUR CAP — Owner directive: max $5.00 labour per dish on dine-in menus =====
 function patchLunchLabour(){
   const LABOUR_CAP=5.00;
-  const CAPPED=new Set(['Breakfast','Lunch','Dinner','Friday','Catering']);
+  const CAPPED=new Set(['Breakfast','Lunch','Dinner','Friday']);
   MENU_ITEMS.forEach(m=>{
     if(CAPPED.has(m.menu)&&m.labour>LABOUR_CAP){m.labour=LABOUR_CAP;recalcItem(m);}
   });
@@ -2259,7 +2235,7 @@ function renderPrimeCost(){
   const avgCover=parseFloat(document.getElementById('pc-cover').value)||OVERHEAD.avgCover;
   const labour=OVERHEAD.labour, rent=OVERHEAD.rent, util=OVERHEAD.utilities;
 
-  const dineIn=MENU_ITEMS.filter(i=>i.menu!=='Catering'&&i.sellPrice>0);
+  const dineIn=MENU_ITEMS.filter(i=>i.sellPrice>0);
   const rawFC=dineIn.length?dineIn.reduce((s,i)=>s+((i.foodCost||0)/i.sellPrice),0)/dineIn.length:0.28;
   const barValid=BAR_ITEMS.filter(i=>i.sellPrice>0);
   const barFC=barValid.length?barValid.reduce((s,i)=>s+((i.estCost||0)/i.sellPrice),0)/barValid.length:0.30;
@@ -2368,7 +2344,7 @@ function loadFromStorage(){
     const m=localStorage.getItem('cecilias_menu');
     const b=localStorage.getItem('cecilias_bar');
     const ing=localStorage.getItem('cecilias_ing');
-    if(m)MENU_ITEMS=JSON.parse(m).map(recalcItem);
+    if(m)MENU_ITEMS=JSON.parse(m).filter(i=>i.menu!=='Catering').map(recalcItem);
     if(b)BAR_ITEMS=JSON.parse(b);
     if(ing)INGREDIENTS=JSON.parse(ing);
     const ts=localStorage.getItem('cecilias_ts');
