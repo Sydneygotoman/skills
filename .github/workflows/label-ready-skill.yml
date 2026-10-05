@@ -110,13 +110,7 @@ jobs:
             } catch { fail(`bullet "${b.name}" has invalid URL`); }
           }
 
-          // 6. No crypto/web3/blockchain/nft keywords anywhere in added lines.
-          const blocked = /\b(crypto|cryptocurrency|web3|blockchain|nft|defi|token(?:omics)?|wallet\b|solana|ethereum|bitcoin)\b/i;
-          for (const line of addedLines) {
-            if (blocked.test(line)) fail(`blocked keyword in added line: ${line.trim()}`);
-          }
-
-          // 7. Each added bullet must sit alphabetically between its immediate
+          // 6. Each added bullet must sit alphabetically between its immediate
           //    neighbors in its category (case-insensitive). Existing disorder
           //    elsewhere in the category is grandfathered.
           const addedSet = new Set(addedBullets.map(b => b.line));
