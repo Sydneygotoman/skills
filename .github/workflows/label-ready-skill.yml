@@ -39,8 +39,22 @@ jobs:
           gh api "repos/$REPO/pulls/$PR/files" --paginate -q '.[].filename' > changed.txt
           cat changed.txt
 
+      # This check only labels README-only listing PRs. PRs that add or change
+      # anything else (e.g. importing a skill folder) are out of scope: skip the
+      # validation and labeling instead of failing the check.
+      - name: Classify PR
+        id: classify
+        run: |
+          if [ -s changed.txt ] && ! grep -qvx 'README.md' changed.txt; then
+            echo "listing_only=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "listing_only=false" >> "$GITHUB_OUTPUT"
+            echo "PR changes files other than README.md; not a listing PR, skipping validation."
+          fi
+
       - name: Validate PR
         id: validate
+        if: steps.classify.outputs.listing_only == 'true'
         run: |
           node <<'EOF'
           const fs = require('fs');
@@ -150,7 +164,7 @@ jobs:
           EOF
 
       - name: Add ready-to-merge label
-        if: success()
+        if: success() && steps.classify.outputs.listing_only == 'true'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           REPO: ${{ github.repository }}
